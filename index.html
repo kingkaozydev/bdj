@@ -43,6 +43,7 @@
                 },
                 animation: { 
                     'spin-slow': 'spin 3s linear infinite', 
+                    'spin-slower': 'spin 15s linear infinite', // Rotação bem lenta para a laranja
                     'wind': 'wind 2s ease-in-out infinite alternate',
                     'bounce-slight': 'bounceSlight 2s infinite',
                     'fade-in': 'fadeIn 0.5s ease-out forwards',
@@ -50,7 +51,9 @@
                     'slide-up': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                     'glow': 'glow 2s ease-in-out infinite alternate',
                     'float': 'float 3s ease-in-out infinite',
+                    'float-gentle': 'floatGentle 4s ease-in-out infinite', // Flutuação suave
                     'impact': 'impact 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
+                    'bubble': 'bubble 3s linear infinite',
                 },
                 keyframes: {
                     wind: { '0%': { transform: 'rotate(-10deg) translateX(0)' }, '100%': { transform: 'rotate(10deg) translateX(5px)' } },
@@ -59,10 +62,16 @@
                     slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
                     glow: { '0%': { boxShadow: '0 0 5px rgba(0, 255, 64, 0.2)' }, '100%': { boxShadow: '0 0 20px rgba(0, 255, 64, 0.6), 0 0 10px rgba(0, 255, 64, 0.4)' } },
                     float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
+                    floatGentle: { '0%, 100%': { transform: 'translateY(0) rotate(0deg)' }, '50%': { transform: 'translateY(-5px) rotate(5deg)' } },
                     impact: {
                         '0%': { opacity: '0', transform: 'scale(1.5) translateY(-50px)' },
                         '70%': { opacity: '1', transform: 'scale(1) translateY(10px)' },
                         '100%': { opacity: '1', transform: 'scale(1) translateY(0)' }
+                    },
+                    bubble: {
+                        '0%': { transform: 'translateY(10px) scale(0)', opacity: '0' },
+                        '50%': { opacity: '1' },
+                        '100%': { transform: 'translateY(-20px) scale(1)', opacity: '0' }
                     }
                 },
                 backgroundImage: {
@@ -375,8 +384,12 @@
                             <div className={`relative w-full h-full`}>
                                 <div className={`absolute inset-0 backface-hidden flex flex-col items-center justify-center bg-gradient-to-br from-[#003311] to-[#001105] rounded-xl overflow-hidden border border-bdjGreen/30 hidden`}></div>
                                 <div className={`absolute inset-0 backface-hidden bg-black overflow-hidden border border-bdjGreen/10 flex flex-col ${isCinemaMode ? 'rounded-none border-none' : 'rounded-xl'}`}>
-                                    <div className="h-8 md:h-10 w-full bg-gradient-to-r from-green-900/90 to-black flex items-center justify-between px-3 md:px-4 shrink-0 border-b border-bdjGreen/20 z-30 relative backdrop-blur-sm">
-                                        <div className="flex items-center gap-2">
+                                    <div className="h-8 md:h-10 w-full bg-gradient-to-r from-green-900/90 to-black flex items-center justify-between px-3 md:px-4 shrink-0 border-b border-bdjGreen/20 z-30 relative backdrop-blur-sm overflow-hidden group/sponsor">
+                                        <div className="absolute left-0 top-0 bottom-0 w-24 pointer-events-none overflow-hidden">
+                                             <img src="https://cdn.shopify.com/s/files/1/0645/6813/1697/files/orange3.png" className="absolute -left-2 top-1/2 -translate-y-1/2 w-10 h-10 object-contain opacity-40 animate-float-gentle" style={{ filter: 'drop-shadow(0 0 5px rgba(255,165,0,0.5))' }} />
+                                             <div className="absolute left-8 bottom-0 w-1 h-1 bg-orange-400 rounded-full animate-ping opacity-50"></div>
+                                        </div>
+                                        <div className="flex items-center gap-2 relative z-10 pl-6">
                                             <span className="text-[8px] md:text-[10px] font-tech text-white/70 uppercase tracking-widest hidden md:block">Oferecimento:</span>
                                             <img src="https://cdn.shopify.com/s/files/1/0645/6813/1697/files/Logotipo_Drinkiss-branco.svg" alt="Drinkiss" className="h-4 md:h-5 object-contain" />
                                         </div>
