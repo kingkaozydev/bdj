@@ -922,7 +922,17 @@
 
                             {/* Consolidated Header with Streamer List */}
                             <div className="flex items-center p-2 bg-bdjDark/95 border-b border-bdjGreen/20 md:rounded-t-xl overflow-x-auto scrollbar-hide pr-12 md:pr-2 pl-3 md:pl-3">
-                               {streamers.map(s => (
+                               {/* Ordenação: Online primeiro, Offline depois */}
+                               {[...streamers].sort((a, b) => {
+                                    const aOnline = onlineStreamers.has(a.id);
+                                    const bOnline = onlineStreamers.has(b.id);
+                                    // Se aOnline for true e bOnline false, a vem antes (-1).
+                                    // Se aOnline for false e bOnline true, b vem antes (1).
+                                    // Se iguais, mantém a ordem original (0).
+                                    if (aOnline && !bOnline) return -1;
+                                    if (!aOnline && bOnline) return 1;
+                                    return 0;
+                               }).map(s => (
                                     <button 
                                         key={s.id} 
                                         onClick={()=>setActiveChat(s.id)} 
