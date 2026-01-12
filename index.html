@@ -376,7 +376,7 @@
                             </div>
                             <div className="flex items-center gap-1 md:gap-2 pointer-events-auto mt-8 md:mt-0">
                                 <button onClick={(e) => { e.stopPropagation(); onSetChat(stream.id); }} className="w-8 h-8 md:w-8 md:h-8 flex items-center justify-center rounded-full bg-black/60 hover:bg-twitch text-white/80 hover:text-white backdrop-blur-md border border-white/10 transition-all active:scale-95" title="Abrir Chat"><Icons.Chat /></button>
-                                <button onClick={(e) => { e.stopPropagation(); onToggleFocus(stream.id); }} className="w-8 h-8 md:w-8 md:h-8 flex items-center justify-center rounded-full bg-black/60 hover:bg-bdjGreen text-white/80 hover:text-black backdrop-blur-md border border-white/10 transition-all active:scale-95" title={isFocused ? "Restaurar Grid" : "Focar Player"}>{isFocused ? <Icons.Minimize /> : <Icons.Maximize />}</button>
+                                <button onClick={(e) => { e.stopPropagation(); onToggleFocus(stream.id); }} className="w-8 h-8 md:w-8 md:h-8 flex items-center justify-center rounded-full bg-black/60 hover:bg-bdjGreen text-white/80 hover:text-black backdrop-blur-md border border-white/10 transition-all active:scale-95" title="Restaurar Grid"><Icons.Minimize /></button>
                                 <button onClick={(e) => { e.stopPropagation(); onRefresh(stream.id); }} className="w-8 h-8 md:w-8 md:h-8 flex items-center justify-center rounded-full bg-black/60 hover:bg-white/20 text-white/80 hover:text-white backdrop-blur-md border border-white/10 transition-all active:scale-95" title="Recarregar/Check Status"><Icons.Refresh /></button>
                             </div>
                         </div>
@@ -597,7 +597,7 @@
                 const labelClass = "text-[8px] md:text-[10px] font-tech font-bold text-bdjGreen/70 uppercase tracking-widest text-right";
                 const statusRowClass = "flex items-center gap-1.5 md:gap-2 justify-end";
                 const dotClass = "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-bdjGreen shadow-[0_0_8px_#00FF40] animate-pulse";
-                const textClass = "text-[10px] md:text-xs font-bold text-white tracking-wider text-shadow text-right uppercase";
+                const textClass = "text-[9px] md:text-xs font-bold text-white tracking-wider text-shadow text-right uppercase";
 
                 if (onlineCount === totalStreamers) {
                     return (
@@ -623,8 +623,8 @@
                     const s = streamers.find(s => s.id === id);
                     const displayNames = { jon: 'Jon', font: 'Font', mar: 'Marcove', jhow: 'Jhow' };
                     const name = s ? (displayNames[s.id] || s.name) : "Alguém";
-                    // Using span for green color
-                    mainContent = <>Apenas o <span className="text-bdjGreen drop-shadow-[0_0_5px_rgba(0,255,64,0.5)]">{name}</span> está online</>;
+                    // Using span for green color and added drop-shadow
+                    mainContent = <>Apenas o <span className="text-bdjGreen font-black drop-shadow-[0_0_8px_rgba(0,255,64,0.6)] animate-pulse">{name}</span> está online</>;
                 } else {
                     mainContent = `Apenas ${onlineCount} estão online`;
                 }
@@ -645,12 +645,44 @@
                     const mainStream = streamers.find(s => s.id === focusedStreamId);
                     const sideStreams = streamers.filter(s => s.id !== focusedStreamId);
                     return (
-                        <div className="flex flex-col md:flex-row gap-4 h-full w-full">
-                            <div className="flex-1 min-h-[40vh] md:min-h-0 relative">
-                                <StreamPlayer key={mainStream.key} stream={mainStream} isGlobalMuted={isGlobalMuted} onRefresh={refreshStream} onToggleFocus={toggleFocus} isFocused={true} onSetChat={setChatAndFocus} isSide={false} isCinemaMode={isCinemaMode} onStatusChange={handleStatusChange} />
+                        <div className="flex flex-col md:flex-row gap-4 h-full w-full items-center justify-center p-4 md:p-0">
+                            
+                            {/* Main Player Area */}
+                            <div className="flex-1 w-full max-w-[100%] flex flex-col items-center justify-center relative p-1"> {/* Added p-1 */}
+                                <div className="w-full aspect-video shadow-2xl relative">
+                                    <StreamPlayer 
+                                        key={mainStream.key} 
+                                        stream={mainStream} 
+                                        isGlobalMuted={isGlobalMuted} 
+                                        onRefresh={refreshStream} 
+                                        onToggleFocus={toggleFocus} 
+                                        isFocused={true} 
+                                        onSetChat={setChatAndFocus} 
+                                        isSide={false} 
+                                        isCinemaMode={isCinemaMode} 
+                                        onStatusChange={handleStatusChange} 
+                                    />
+                                </div>
                             </div>
-                            <div className={`w-full md:w-80 flex flex-row md:flex-col gap-3 overflow-x-auto md:overflow-y-auto scrollbar-hide md:h-full shrink-0 pb-2 md:pb-0 ${isCinemaMode ? 'hidden' : ''}`}>
-                                {sideStreams.map(s => <div key={s.id} className="w-64 md:w-full aspect-video shrink-0"><StreamPlayer key={s.key} stream={s} isGlobalMuted={isGlobalMuted} onRefresh={refreshStream} onToggleFocus={toggleFocus} isFocused={false} onSetChat={setChatAndFocus} isSide={true} isCinemaMode={isCinemaMode} onStatusChange={handleStatusChange} /></div>)}
+
+                            {/* Side Players Area */}
+                            <div className={`w-full md:w-80 flex flex-row md:flex-col gap-3 overflow-x-auto md:overflow-y-auto scrollbar-hide shrink-0 pb-2 md:pb-0 md:justify-center ${isCinemaMode ? 'hidden' : ''}`} style={{maxHeight: '100%'}}>
+                                {sideStreams.map(s => (
+                                    <div key={s.id} className="w-64 md:w-full aspect-video shrink-0">
+                                        <StreamPlayer 
+                                            key={s.key} 
+                                            stream={s} 
+                                            isGlobalMuted={isGlobalMuted} 
+                                            onRefresh={refreshStream} 
+                                            onToggleFocus={toggleFocus} 
+                                            isFocused={false} 
+                                            onSetChat={setChatAndFocus} 
+                                            isSide={true} 
+                                            isCinemaMode={isCinemaMode} 
+                                            onStatusChange={handleStatusChange} 
+                                        />
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     );
@@ -670,7 +702,7 @@
                         <header className="h-16 md:h-20 cyber-border-bottom flex items-center px-4 md:px-8 justify-between z-40 relative flex-shrink-0 animate-fade-in" style={{animationDelay: '0.5s', opacity: 0, animationFillMode: 'forwards'}}>
                             <div className="flex items-center gap-6"><BDJLogo /></div>
                             <div className="flex items-center gap-4">
-                                <div>
+                                <div className="block">
                                     {renderStatusText()}
                                 </div>
                                 <div className="h-8 w-[1px] bg-bdjGreen/20 hidden md:block"></div>
