@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="referrer" content="no-referrer">
+    <meta name="referrer" content="origin"> <!-- Alterado para origin para melhorar compatibilidade de auth -->
     <meta name="description" content="BDJ - Multiview e Portal Oficial da Tropa.">
     <title>BDJ | Multiview Oficial</title>
     
@@ -43,7 +43,7 @@
                 },
                 animation: { 
                     'spin-slow': 'spin 3s linear infinite', 
-                    'spin-slower': 'spin 15s linear infinite', // Rotação bem lenta para a laranja
+                    'spin-slower': 'spin 15s linear infinite', 
                     'wind': 'wind 2s ease-in-out infinite alternate',
                     'bounce-slight': 'bounceSlight 2s infinite',
                     'fade-in': 'fadeIn 0.5s ease-out forwards',
@@ -51,9 +51,10 @@
                     'slide-up': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                     'glow': 'glow 2s ease-in-out infinite alternate',
                     'float': 'float 3s ease-in-out infinite',
-                    'float-gentle': 'floatGentle 4s ease-in-out infinite', // Flutuação suave
+                    'float-gentle': 'floatGentle 4s ease-in-out infinite',
                     'impact': 'impact 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
                     'bubble': 'bubble 3s linear infinite',
+                    'rise': 'rise 10s infinite ease-in', // Nova animação para partículas
                 },
                 keyframes: {
                     wind: { '0%': { transform: 'rotate(-10deg) translateX(0)' }, '100%': { transform: 'rotate(10deg) translateX(5px)' } },
@@ -72,6 +73,13 @@
                         '0%': { transform: 'translateY(10px) scale(0)', opacity: '0' },
                         '50%': { opacity: '1' },
                         '100%': { transform: 'translateY(-20px) scale(1)', opacity: '0' }
+                    },
+                    rise: {
+                        '0%': { bottom: '-20px', transform: 'translateX(0)', opacity: '0' },
+                        '20%': { opacity: '0.6' },
+                        '50%': { transform: 'translateX(10px)' },
+                        '80%': { opacity: '0.6' },
+                        '100%': { bottom: '110%', transform: 'translateX(-10px)', opacity: '0' }
                     }
                 },
                 backgroundImage: {
@@ -87,10 +95,7 @@
             margin: 0; 
             padding: 0; 
             overflow: hidden; 
-            background-image: url('https://i.imgur.com/3EIaZHq.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            /* Fundo estático removido em favor do componente animado, mantendo cor base */
             transition: background 0.5s ease;
         }
         
@@ -220,6 +225,26 @@
         .mobile-chat-enter-active { transform: translateY(0); transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1); }
         .mobile-chat-exit { transform: translateY(0); }
         .mobile-chat-exit-active { transform: translateY(100%); transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* Estilos do Fundo Animado */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: #020502;
+            overflow: hidden;
+        }
+        .ember {
+            position: absolute;
+            background: #00FF40;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00FF40, 0 0 20px #00FF40;
+            opacity: 0;
+            animation: rise linear infinite;
+        }
     </style>
 </head>
 <body>
@@ -246,7 +271,7 @@
             EyeOff: (props)=><svg {...props} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>,
             Moon: (props)=><svg {...props} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>,
             Sun: (props)=><svg {...props} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>,
-            Settings: (props)=><svg {...props} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1 2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            Settings: (props)=><svg {...props} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1 2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
         };
 
         const BDJLogo = () => (
@@ -313,13 +338,54 @@
                 </div>
             )
         };
+        
+        // Novo Componente: Fundo Animado
+        const AnimatedBackground = () => {
+             const [particles, setParticles] = useState([]);
+
+             useEffect(() => {
+                 const particleCount = 20; // Número de partículas
+                 const newParticles = [];
+                 for(let i=0; i<particleCount; i++) {
+                     newParticles.push({
+                         id: i,
+                         left: Math.random() * 100, // Posição horizontal aleatória
+                         size: Math.random() * 4 + 2, // Tamanho aleatório
+                         duration: Math.random() * 5 + 5, // Duração da animação
+                         delay: Math.random() * 5 // Atraso inicial
+                     });
+                 }
+                 setParticles(newParticles);
+             }, []);
+
+             return (
+                 <div className="animated-bg">
+                     {particles.map(p => (
+                         <div 
+                             key={p.id}
+                             className="ember"
+                             style={{
+                                 left: `${p.left}%`,
+                                 width: `${p.size}px`,
+                                 height: `${p.size}px`,
+                                 animationDuration: `${p.duration}s`,
+                                 animationDelay: `${p.delay}s`
+                             }}
+                         ></div>
+                     ))}
+                 </div>
+             );
+        };
 
         const TwitchEmbed = memo(({ channel, isMuted, onLoad, onOffline, onOnline }) => {
             const embedRef = useRef(null);
             useEffect(() => {
                 if (!embedRef.current || !window.Twitch) return;
                 embedRef.current.innerHTML = '';
+                // Adicionado allow-storage-access e sandbox expandido para persistência de login
                 const options = { width: '100%', height: '100%', channel: channel, parent: [window.location.hostname, 'localhost'], muted: isMuted, autoplay: true, layout: 'video' };
+                // Nota: A API JS da Twitch cria seu próprio iframe, não temos controle total sobre os atributos 'sandbox' dele via JS API,
+                // mas garantimos que o parent está correto. Para o chat, o controle é maior.
                 const player = new window.Twitch.Player(embedRef.current, options);
                 player.addEventListener(window.Twitch.Player.READY, () => { player.setMuted(isMuted); if(onLoad) onLoad(); });
                 player.addEventListener(window.Twitch.Player.OFFLINE, () => { if(onOffline) onOffline(); });
@@ -563,13 +629,23 @@
         const App = () => {
             const [isLoading, setIsLoading] = useState(true);
             const [streamers, setStreamers] = useState([ { id: 'jon', name: 'jonvlogs', key: 1 }, { id: 'font', name: 'fontinnelerj', key: 2 }, { id: 'mar', name: 'marcove', key: 3 }, { id: 'jhow', name: 'jhowrj1', key: 4 } ]);
-            const [isGlobalMuted, setIsGlobalMuted] = useState(true);
+            
+            // Persistência com localStorage
+            const [isGlobalMuted, setIsGlobalMuted] = useState(() => localStorage.getItem('isGlobalMuted') === 'true');
             const [showAbout, setShowAbout] = useState(false);
-            const [activeChat, setActiveChat] = useState('jon');
+            const [activeChat, setActiveChat] = useState(() => localStorage.getItem('activeChat') || 'jon');
             const [focusedStreamId, setFocusedStreamId] = useState(null);
             const [isCinemaMode, setIsCinemaMode] = useState(false);
-            const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+            const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+                if (window.innerWidth < 1024) return false;
+                const saved = localStorage.getItem('isSidebarOpen');
+                return saved !== null ? saved === 'true' : true;
+            });
             const [onlineStreamers, setOnlineStreamers] = useState(new Set());
+
+            useEffect(() => { localStorage.setItem('isGlobalMuted', isGlobalMuted); }, [isGlobalMuted]);
+            useEffect(() => { localStorage.setItem('activeChat', activeChat); }, [activeChat]);
+            useEffect(() => { localStorage.setItem('isSidebarOpen', isSidebarOpen); }, [isSidebarOpen]);
 
             useEffect(() => { if (window.innerWidth < 1024) setIsSidebarOpen(false); }, []);
             useEffect(() => { if(isCinemaMode) { document.body.classList.add('cinema-active'); } else { document.body.classList.remove('cinema-active'); } }, [isCinemaMode]);
@@ -695,7 +771,8 @@
             };
 
             return (
-                <div className="flex flex-col h-screen font-sans overflow-hidden selection:bg-bdjGreen selection:text-black">
+                <div className="flex flex-col h-screen font-sans overflow-hidden selection:bg-bdjGreen selection:text-black relative">
+                    <AnimatedBackground /> {/* Fundo Animado Adicionado */}
                     {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
                     <AboutModal isOpen={showAbout} onClose={()=>setShowAbout(false)} />
                     {!isCinemaMode && (
@@ -756,7 +833,13 @@
                             </div>
                             
                             <div className="flex-1 relative bg-[#0e0e10] md:rounded-b-xl overflow-hidden">
-                                <iframe src={`https://www.twitch.tv/embed/${streamers.find(s=>s.id===activeChat).name}/chat?parent=${window.location.hostname}&parent=localhost&darkpopout`} width="100%" height="100%" className="border-none w-full h-full"></iframe>
+                                <iframe 
+                                    src={`https://www.twitch.tv/embed/${streamers.find(s=>s.id===activeChat).name}/chat?parent=${window.location.hostname}&parent=localhost&darkpopout`} 
+                                    width="100%" 
+                                    height="100%" 
+                                    className="border-none w-full h-full"
+                                    sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-modals"
+                                ></iframe>
                             </div>
                         </aside>
                     </div>
