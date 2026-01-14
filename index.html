@@ -48,6 +48,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;900&family=Russo+One&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Bloqueio de Ferramentas de Desenvolvedor (Segurança Básica) -->
+    <script>
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) { return false; } // F12
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { return false; } // Ctrl+Shift+I
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { return false; } // Ctrl+Shift+C
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { return false; } // Ctrl+Shift+J
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; } // Ctrl+U
+            if(e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) { return false; } // Ctrl+S
+        }
+    </script>
+
     <script>
         tailwind.config = {
             theme: { extend: {
@@ -80,6 +93,7 @@
                     'impact': 'impact 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
                     'bubble': 'bubble 3s linear infinite',
                     'rise': 'rise 10s infinite ease-in',
+                    'flip-reveal': 'flipReveal 2s cubic-bezier(0.4, 0, 0.2, 1) forwards',
                 },
                 keyframes: {
                     wind: { '0%': { transform: 'rotate(-10deg) translateX(0)' }, '100%': { transform: 'rotate(10deg) translateX(5px)' } },
@@ -105,6 +119,13 @@
                         '50%': { transform: 'translateX(10px)' },
                         '80%': { opacity: '0.6' },
                         '100%': { bottom: '110%', transform: 'translateX(-10px)', opacity: '0' }
+                    },
+                    flipReveal: {
+                        '0%': { transform: 'perspective(400px) rotateY(90deg) scale(0.5)', opacity: '0' },
+                        '40%': { transform: 'perspective(400px) rotateY(-20deg) scale(1.1)', opacity: '1' },
+                        '60%': { transform: 'perspective(400px) rotateY(10deg) scale(1.05)' },
+                        '80%': { transform: 'perspective(400px) rotateY(-5deg) scale(1)' },
+                        '100%': { transform: 'perspective(400px) rotateY(0deg) scale(1)', opacity: '1' }
                     }
                 },
                 backgroundImage: {
@@ -121,6 +142,9 @@
             padding: 0; 
             overflow: hidden; 
             transition: background 0.5s ease;
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax */
         }
         
         /* Camada Base Sólida (Fundo Preto) */
@@ -280,6 +304,44 @@
             opacity: 0;
             animation: rise linear infinite;
         }
+
+        /* ANIMAÇÃO DE IMPACTO PARA INTRO (RESTAURADA) */
+        @keyframes letterImpact {
+            0% { transform: scale(5); opacity: 0; filter: blur(20px); }
+            40% { transform: scale(0.9); opacity: 1; filter: blur(0px); }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes glowPulse {
+            0% { text-shadow: 0 0 10px #00FF40, 0 0 20px #00FF40; }
+            50% { text-shadow: 0 0 30px #00FF40, 0 0 50px #00FF40, 0 0 70px #00FF40; }
+            100% { text-shadow: 0 0 10px #00FF40, 0 0 20px #00FF40; }
+        }
+
+        .letter-anim {
+            display: inline-block;
+            animation-fill-mode: forwards;
+            opacity: 0;
+        }
+        
+        .letter-active {
+            animation: letterImpact 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, glowPulse 3s infinite 0.5s;
+        }
+
+        /* Estilo para rotação 3D da Drinkiss (Agora nos Players) */
+        .drinkiss-spin {
+            animation: drinkissSpin 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes drinkissSpin {
+            0% { transform: scale(0.5) rotateY(0deg); opacity: 0; }
+            20% { opacity: 1; }
+            40% { transform: scale(1.1) rotateY(180deg); }
+            60% { transform: scale(1.0) rotateY(360deg); }
+            80% { transform: scale(1.0) rotateY(360deg); opacity: 1; }
+            100% { transform: scale(1.5) rotateY(360deg); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -356,6 +418,38 @@
             if(id === 'jhow') return "https://i.imgur.com/ylSZpz2.png";
             return "https://ui-avatars.com/api/?background=random&color=fff&size=128&bold=true&name=" + id;
         }
+
+        // NOVO COMPONENTE: Propaganda Drinkiss (Pre-roll no Player)
+        const DrinkissAd = ({ onFinish }) => {
+            useEffect(() => {
+                const timer = setTimeout(() => {
+                    onFinish();
+                }, 2800); // Tempo total do anúncio antes de liberar o vídeo
+                return () => clearTimeout(timer);
+            }, [onFinish]);
+
+            return (
+                <div className="absolute inset-0 z-30 bg-[#020502] flex flex-col items-center justify-center overflow-hidden">
+                    {/* Fundo com efeito */}
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(0,255,64,0.15)_0%,_transparent_70%)]"></div>
+                    
+                    {/* Container da Lata/Logo com Animação */}
+                    <div className="relative z-10 drinkiss-spin">
+                        <img 
+                            src="https://cdn.shopify.com/s/files/1/0645/6813/1697/files/Logotipo_Drinkiss-branco.svg" 
+                            alt="Drinkiss" 
+                            className="h-16 md:h-24 object-contain drop-shadow-[0_0_15px_rgba(0,255,64,0.4)]"
+                        />
+                    </div>
+                    
+                    <div className="absolute bottom-4 left-0 right-0 text-center animate-pulse">
+                         <p className="text-white/40 font-tech text-[10px] uppercase tracking-[0.3em]">
+                            Carregando a Tropa...
+                         </p>
+                    </div>
+                </div>
+            );
+        };
 
         const Credits = ({ isSidebarOpen, chatWidth }) => {
             const [visible, setVisible] = useState(true);
@@ -443,12 +537,21 @@
             return <div ref={embedRef} className="w-full h-full bg-black"></div>;
         });
 
-        const StreamPlayer = memo(({ stream, isGlobalMuted, onRefresh, onToggleFocus, isFocused, onSetChat, isSide, isCinemaMode, onStatusChange }) => {
+        const StreamPlayer = memo(({ stream, isGlobalMuted, onRefresh, onToggleFocus, isFocused, onSetChat, isSide, isCinemaMode, onStatusChange, appIsReady }) => {
             const isJhow = stream.id === 'jhow';
             const [isHovered, setIsHovered] = useState(false);
-            const [status, setStatus] = useState('loading'); 
+            const [status, setStatus] = useState('loading');
+            const [showAd, setShowAd] = useState(true); // Estado para controlar a propaganda
             const socials = SOCIALS[stream.id] || {};
             
+            // Quando recarregar, mostra a propaganda de novo
+            const handleManualRefresh = (e) => {
+                e.stopPropagation();
+                setShowAd(true);
+                setStatus('loading');
+                onRefresh(stream.id);
+            };
+
             const handleOffline = useCallback(() => {
                 setStatus('offline');
                 if(onStatusChange) onStatusChange(stream.id, false);
@@ -478,8 +581,8 @@
                                 <div className={`absolute inset-0 backface-hidden flex flex-col items-center justify-center bg-gradient-to-br from-[#003311] to-[#001105] rounded-xl overflow-hidden border border-bdjGreen/30 hidden`}></div>
                                 <div className={`absolute inset-0 backface-hidden bg-black overflow-hidden border border-bdjGreen/10 flex flex-col ${isCinemaMode ? 'rounded-none border-none' : 'rounded-xl'}`}>
                                     
-                                    {/* BANNER SECTION - Mantido no topo, fora da área de sobreposição */}
-                                    <div className="h-8 md:h-10 w-full bg-gradient-to-r from-green-900/90 to-black flex items-center justify-between px-3 md:px-4 shrink-0 border-b border-bdjGreen/20 z-30 relative backdrop-blur-sm overflow-hidden group/sponsor">
+                                    {/* BANNER SECTION - Mantido Fixo */}
+                                    <div className="h-8 md:h-10 w-full bg-gradient-to-r from-green-900/90 to-black flex items-center justify-between px-3 md:px-4 shrink-0 border-b border-bdjGreen/20 z-40 relative backdrop-blur-sm overflow-hidden group/sponsor">
                                         <div className="absolute left-0 top-0 bottom-0 w-24 pointer-events-none overflow-hidden">
                                              <img src="https://cdn.shopify.com/s/files/1/0645/6813/1697/files/orange3.png" className="absolute -left-2 top-1/2 -translate-y-1/2 w-10 h-10 object-contain opacity-40 animate-float-gentle" style={{ filter: 'drop-shadow(0 0 5px rgba(255,165,0,0.5))' }} />
                                              <div className="absolute left-8 bottom-0 w-1 h-1 bg-orange-400 rounded-full animate-ping opacity-50"></div>
@@ -493,14 +596,22 @@
                                         </a>
                                     </div>
 
-                                    {/* ÁREA DO VÍDEO + OVERLAYS */}
+                                    {/* ÁREA DO VÍDEO + PROPAGANDA + OVERLAYS */}
                                     <div className="flex-1 relative w-full h-full">
-                                        <div className={`w-full h-full ${status === 'offline' ? 'hidden' : 'block'}`}>
+                                        
+                                        {/* 1. PROPAGANDA (Pre-roll) - Cobre o vídeo temporariamente */}
+                                        {/* CORREÇÃO: Só renderiza se showAd for true E o app já estiver pronto (intro acabou) */}
+                                        {showAd && appIsReady && (
+                                            <DrinkissAd onFinish={() => setShowAd(false)} />
+                                        )}
+
+                                        {/* 2. PLAYER DE VÍDEO */}
+                                        <div className={`w-full h-full ${(status === 'offline' && !showAd) ? 'hidden' : 'block'}`}>
                                             <TwitchEmbed key={stream.key} channel={stream.name} isMuted={isGlobalMuted} onLoad={handleLoad} onOffline={handleOffline} onOnline={handleOnline} />
                                         </div>
                                         
-                                        {/* OVERLAY DE STATUS (OFFLINE) */}
-                                        {status === 'offline' && (
+                                        {/* OVERLAY DE STATUS (OFFLINE) - Só aparece se não tiver ad rodando */}
+                                        {status === 'offline' && !showAd && (
                                             <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#051005] animate-fade-in z-10">
                                                 <div className="relative mb-4">
                                                     <div className="absolute inset-0 bg-bdjGreen blur-2xl opacity-10 rounded-full"></div>
@@ -509,19 +620,19 @@
                                                 </div>
                                                 <h3 className="text-gray-500 font-russo text-lg md:text-xl uppercase tracking-widest">Offline</h3>
                                                 <p className="text-gray-600 text-xs mt-2 max-w-[200px] text-center">O sinal caiu ou a live encerrou.</p>
-                                                <button onClick={() => { setStatus('loading'); onRefresh(stream.id); }} className="mt-6 px-4 py-2 bg-bdjGreen/10 hover:bg-bdjGreen/20 text-bdjGreen text-xs font-bold rounded-full border border-bdjGreen/30 transition-all uppercase tracking-wider flex items-center gap-2 hover:shadow-[0_0_15px_rgba(0,255,64,0.2)]"><Icons.Refresh /> Tentar Reconectar</button>
+                                                <button onClick={handleManualRefresh} className="mt-6 px-4 py-2 bg-bdjGreen/10 hover:bg-bdjGreen/20 text-bdjGreen text-xs font-bold rounded-full border border-bdjGreen/30 transition-all uppercase tracking-wider flex items-center gap-2 hover:shadow-[0_0_15px_rgba(0,255,64,0.2)]"><Icons.Refresh /> Tentar Reconectar</button>
                                             </div>
                                         )}
                                         
-                                        {/* LOADING STATE */}
-                                        {status === 'loading' && (
+                                        {/* LOADING STATE (Fallback simples se a ad acabar mas stream ainda não estiver pronto) */}
+                                        {status === 'loading' && !showAd && (
                                             <div className="absolute inset-0 flex items-center justify-center bg-black z-20 pointer-events-none">
                                                 <div className="w-8 h-8 border-2 border-bdjGreen border-t-transparent rounded-full animate-spin"></div>
                                             </div>
                                         )}
 
                                         {/* 1. INFO STREAMER (Canto Superior Esquerdo - Abaixo do Banner) */}
-                                        <div className={`absolute top-4 left-4 z-40 flex items-center gap-2 transition-all duration-300 pointer-events-none ${isHovered || status === 'offline' ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}>
+                                        <div className={`absolute top-4 left-4 z-40 flex items-center gap-2 transition-all duration-300 pointer-events-none ${(isHovered || status === 'offline') && !showAd ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}>
                                              <div className="flex flex-col items-start pointer-events-auto bg-black/60 backdrop-blur-md p-1.5 rounded-xl border border-white/10 pr-4 pl-1.5 shadow-lg gap-1">
                                                 <div className="flex items-center gap-2">
                                                     {!isSide && (
@@ -560,14 +671,14 @@
                                         </div>
 
                                         {/* 2. CONTROLES (Lateral Direita Vertical) */}
-                                        <div className={`absolute right-2 top-16 z-40 flex flex-col gap-2 transition-all duration-300 ${isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'}`}>
+                                        <div className={`absolute right-2 top-16 z-40 flex flex-col gap-2 transition-all duration-300 ${(isHovered && !showAd) ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'}`}>
                                             <button onClick={(e) => { e.stopPropagation(); onSetChat(stream.id); }} className="w-8 h-8 flex items-center justify-center rounded-full bg-black/60 hover:bg-twitch text-white/80 hover:text-white backdrop-blur-md border border-white/10 transition-all active:scale-95 shadow-lg group/btn relative" title="Abrir Chat">
                                                 <Icons.Chat />
                                             </button>
                                             <button onClick={(e) => { e.stopPropagation(); onToggleFocus(stream.id); }} className="w-8 h-8 flex items-center justify-center rounded-full bg-black/60 hover:bg-bdjGreen text-white/80 hover:text-black backdrop-blur-md border border-white/10 transition-all active:scale-95 shadow-lg" title="Restaurar Grid">
                                                 <Icons.Minimize />
                                             </button>
-                                            <button onClick={(e) => { e.stopPropagation(); onRefresh(stream.id); }} className="w-8 h-8 flex items-center justify-center rounded-full bg-black/60 hover:bg-white/20 text-white/80 hover:text-white backdrop-blur-md border border-white/10 transition-all active:scale-95 shadow-lg" title="Recarregar">
+                                            <button onClick={handleManualRefresh} className="w-8 h-8 flex items-center justify-center rounded-full bg-black/60 hover:bg-white/20 text-white/80 hover:text-white backdrop-blur-md border border-white/10 transition-all active:scale-95 shadow-lg" title="Recarregar">
                                                 <Icons.Refresh />
                                             </button>
                                         </div>
@@ -645,41 +756,64 @@
         const LoadingScreen = ({ onComplete }) => {
             const [step, setStep] = useState(0); 
             
-            // Função para pular intro
-            const handleSkip = () => {
-                onComplete();
-            };
+            const handleSkip = () => onComplete();
 
             useEffect(() => {
-                const t1 = setTimeout(() => setStep(1), 500);  
-                const t2 = setTimeout(() => setStep(2), 1000); 
-                const t3 = setTimeout(() => setStep(3), 1500); 
-                const t4 = setTimeout(() => setStep(4), 2200); 
-                const t5 = setTimeout(() => setStep(5), 4500); 
-                const t6 = setTimeout(onComplete, 5200);       
+                // Timing agressivo (Impacto)
+                const t1 = setTimeout(() => setStep(1), 300);   // B
+                const t2 = setTimeout(() => setStep(2), 800);   // D
+                const t3 = setTimeout(() => setStep(3), 1300);  // J
+                const t4 = setTimeout(() => setStep(4), 1800);  // Slogan
+                const t5 = setTimeout(() => setStep(5), 3200);  // Fade Out
+                const t6 = setTimeout(onComplete, 3800);      // Remove
                 return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); clearTimeout(t6); };
             }, [onComplete]);
 
             if (step === 6) return null;
+            
             return (
-                <div className={`fixed inset-0 z-[100] bg-[#020502] flex flex-col items-center justify-center transition-opacity duration-700 ${step === 5 ? 'opacity-0' : 'opacity-100'}`}>
-                     <div className="relative flex flex-col items-center">
-                        <div className="flex items-center gap-2 md:gap-6 mb-6">
-                            <span className={`font-brand font-black text-7xl md:text-9xl text-white transition-all duration-500 transform animate-impact ${step >= 1 ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-10 scale-150'}`} style={{textShadow: '0 0 10px rgba(0,0,0,0.8), 4px 4px 0px #000000, 8px 8px 0px #00FF40'}}>B</span>
-                            <span className={`font-brand font-black text-7xl md:text-9xl text-white transition-all duration-500 transform animate-impact ${step >= 2 ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-10 scale-150'}`} style={{textShadow: '0 0 10px rgba(0,0,0,0.8), 4px 4px 0px #000000, 8px 8px 0px #00FF40', animationDelay: '0.1s'}}>D</span>
-                            <span className={`font-brand font-black text-7xl md:text-9xl text-white transition-all duration-500 transform animate-impact ${step >= 3 ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-10 scale-150'}`} style={{textShadow: '0 0 10px rgba(0,0,0,0.8), 4px 4px 0px #000000, 8px 8px 0px #00FF40', animationDelay: '0.2s'}}>J</span>
+                <div className={`fixed inset-0 z-[100] bg-[#020502] flex flex-col items-center justify-center transition-all duration-700 ease-in-out ${step >= 5 ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100'}`}>
+                     
+                     {/* Efeito de Fundo (Spotlight) */}
+                     <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-1000 ${step >= 1 ? 'opacity-100' : 'opacity-0'}`}>
+                        <div className="w-[500px] h-[500px] bg-bdjGreen/5 blur-[120px] rounded-full"></div>
+                     </div>
+
+                     <div className="relative flex flex-col items-center z-10">
+                        <div className="flex items-center gap-2 md:gap-6">
+                            {/* Letra B */}
+                            <span className={`font-brand font-black text-7xl md:text-[10rem] text-white tracking-tighter letter-anim ${step >= 1 ? 'letter-active' : ''}`} 
+                                  style={{ textShadow: '0 0 20px rgba(255,255,255,0.2)' }}>
+                                B
+                            </span>
+                            
+                            {/* Letra D */}
+                            <span className={`font-brand font-black text-7xl md:text-[10rem] text-white tracking-tighter letter-anim ${step >= 2 ? 'letter-active' : ''}`} 
+                                  style={{ textShadow: '0 0 20px rgba(255,255,255,0.2)' }}>
+                                D
+                            </span>
+                            
+                            {/* Letra J (Verde) */}
+                            <span className={`font-brand font-black text-7xl md:text-[10rem] text-bdjGreen tracking-tighter letter-anim ${step >= 3 ? 'letter-active' : ''}`} 
+                                  style={{ textShadow: '0 0 30px rgba(0,255,64,0.5)' }}>
+                                J
+                            </span>
                         </div>
-                        <div className={`transition-all duration-700 delay-100 transform ${step >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                             <p className="text-bdjGreen font-tech text-sm md:text-lg uppercase tracking-[0.2em] animate-pulse text-center px-4 drop-shadow-md font-bold">
-                                O ecossistema dos maiores <br className="md:hidden" /> criadores de IRL do Brasil!
+
+                        {/* Linha e Slogan */}
+                        <div className={`mt-10 w-full flex flex-col items-center transition-all duration-500 ease-out transform
+                            ${step >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}
+                        `}>
+                             <div className="h-1.5 w-32 bg-bdjGreen rounded-full mb-6 shadow-[0_0_15px_#00FF40]"></div>
+                             <p className="text-white/80 font-tech text-sm md:text-base uppercase tracking-[0.8em] drop-shadow-lg">
+                                Multiview Oficial
                              </p>
                         </div>
                      </div>
                      
-                     {/* Botão de Pular Intro */}
                      <button 
                         onClick={handleSkip}
-                        className="absolute bottom-8 right-8 text-white/50 hover:text-white text-xs font-bold uppercase tracking-widest border border-white/10 hover:border-white/40 px-4 py-2 rounded-full transition-all flex items-center gap-2 group"
+                        className="absolute bottom-10 right-10 text-white/30 hover:text-white text-[10px] font-bold uppercase tracking-widest border border-white/5 hover:border-white/20 px-5 py-2.5 rounded-full transition-all flex items-center gap-2 group z-50 hover:bg-white/5 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]"
                      >
                         Pular Intro <Icons.Forward width={12} height={12} className="group-hover:translate-x-1 transition-transform" />
                      </button>
@@ -763,6 +897,9 @@
             });
             const [onlineStreamers, setOnlineStreamers] = useState(new Set());
             const [chatWidth, setChatWidth] = useState(320); // Estado para largura do chat
+            
+            // Variável auxiliar para controlar quando os players podem começar a tocar Ads
+            const appIsReady = !isLoading;
 
             useEffect(() => { localStorage.setItem('isGlobalMuted', isGlobalMuted); }, [isGlobalMuted]);
             useEffect(() => { localStorage.setItem('activeChat', activeChat); }, [activeChat]);
@@ -904,7 +1041,8 @@
                                         onSetChat={setChatAndFocus} 
                                         isSide={false} 
                                         isCinemaMode={isCinemaMode} 
-                                        onStatusChange={handleStatusChange} 
+                                        onStatusChange={handleStatusChange}
+                                        appIsReady={appIsReady} 
                                     />
                                 </div>
                             </div>
@@ -923,7 +1061,8 @@
                                             onSetChat={setChatAndFocus} 
                                             isSide={true} 
                                             isCinemaMode={isCinemaMode} 
-                                            onStatusChange={handleStatusChange} 
+                                            onStatusChange={handleStatusChange}
+                                            appIsReady={appIsReady} 
                                         />
                                     </div>
                                 ))}
@@ -933,7 +1072,7 @@
                 }
                 return (
                     <div className={`grid grid-cols-1 md:grid-cols-2 ${isCinemaMode ? 'gap-0 h-full' : 'gap-4 md:gap-8 h-full pr-1'} w-full overflow-y-auto pb-20 md:pb-0`}>
-                        {streamers.map(s => <div key={s.id} className="w-full h-full min-h-[30vh]"><StreamPlayer key={s.key} stream={s} isGlobalMuted={isGlobalMuted} onRefresh={refreshStream} onToggleFocus={toggleFocus} isFocused={false} onSetChat={setChatAndFocus} isSide={false} isCinemaMode={isCinemaMode} onStatusChange={handleStatusChange} /></div>)}
+                        {streamers.map(s => <div key={s.id} className="w-full h-full min-h-[30vh]"><StreamPlayer key={s.key} stream={s} isGlobalMuted={isGlobalMuted} onRefresh={refreshStream} onToggleFocus={toggleFocus} isFocused={false} onSetChat={setChatAndFocus} isSide={false} isCinemaMode={isCinemaMode} onStatusChange={handleStatusChange} appIsReady={appIsReady} /></div>)}
                     </div>
                 );
             };
