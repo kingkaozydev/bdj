@@ -544,6 +544,11 @@
             const [showAd, setShowAd] = useState(true); // Estado para controlar a propaganda
             const socials = SOCIALS[stream.id] || {};
             
+            // Correção do Bug: Função estável para encerrar o anúncio
+            const handleAdFinish = useCallback(() => {
+                setShowAd(false);
+            }, []);
+            
             // Quando recarregar, mostra a propaganda de novo
             const handleManualRefresh = (e) => {
                 e.stopPropagation();
@@ -602,7 +607,7 @@
                                         {/* 1. PROPAGANDA (Pre-roll) - Cobre o vídeo temporariamente */}
                                         {/* CORREÇÃO: Só renderiza se showAd for true E o app já estiver pronto (intro acabou) */}
                                         {showAd && appIsReady && (
-                                            <DrinkissAd onFinish={() => setShowAd(false)} />
+                                            <DrinkissAd onFinish={handleAdFinish} />
                                         )}
 
                                         {/* 2. PLAYER DE VÍDEO */}
